@@ -1,0 +1,242 @@
+/* Styles de base */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+a {
+    text-decoration: none;
+    color: #6c757d;
+}
+
+a:hover {
+    color: #0d6efd;
+}
+
+/* En-tête */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #212529;
+}
+
+.nav-link {
+    font-weight: 500;
+}
+
+/* Hero section */
+.hero-section {
+    padding: 4rem 0;
+}
+
+/* Cart icon */
+.cart-icon {
+    position: relative;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Product cards */
+.card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Product detail */
+.product-detail-img {
+    max-height: 500px;
+    width: 100%;
+    object-fit: contain;
+}
+
+/* Footer */
+footer {
+    background-color: #212529;
+    color: white;
+    padding: 3rem 0;
+}
+
+.footer-links h5 {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    color: #adb5bd;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+/* Boutons */
+.btn-primary {
+    background-color: #8B0000;
+    border-color: #8B0000;
+}
+
+.btn-primary:hover {
+    background-color: #6B0000;
+    border-color: #6B0000;
+}
+
+.btn-outline-primary {
+    color: #8B0000;
+    border-color: #8B0000;
+}
+
+.btn-outline-primary:hover {
+    background-color: #8B0000;
+    border-color: #8B0000;
+}
+
+/* Formulaires */
+.form-control:focus {
+    border-color: #8B0000;
+    box-shadow: 0 0 0 0.25rem rgba(139, 0, 0, 0.25);
+}
+
+/* Alertes */
+.alert {
+    border-radius: 0;
+}
+
+/* Page de catégorie */
+.category-banner {
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.category-banner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.category-banner h1 {
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Panier */
+.cart-table th {
+    font-weight: 600;
+}
+
+.cart-totals {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section .col-md-6 {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+}
+/* assets/css/style.css */
+
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 12px;
+    position: fixed;
+    z-index: 1000;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.loading-more {
+    text-align: center;
+    padding: 20px;
+    margin: 20px 0;
+    color: #666;
+}
+
+.favorite-btn.active i {
+    color: #dc3545;
+}
+
+.cart-count {
+    display: none;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 5px;
+}

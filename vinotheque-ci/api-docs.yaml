@@ -1,0 +1,62 @@
+openapi: 3.0.0
+info:
+  title: API Vinotheque CI
+  description: API pour l'application de vente de vins et spiritueux
+  version: 1.0.0
+
+servers:
+  - url: https://api.vinotheque.ci/v1
+    description: Serveur de production
+
+paths:
+  /products:
+    get:
+      summary: Liste des produits
+      responses:
+        '200':
+          description: Liste des produits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  
+  /products/{id}:
+    get:
+      summary: Détails d'un produit
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Détails du produit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Produit non trouvé
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        image:
+          type: string
+      required:
+        - id
+        - name
+        - price

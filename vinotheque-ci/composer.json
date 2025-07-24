@@ -1,0 +1,14 @@
+{
+    "name": "vinotheque-ci/vinotheque",
+    "description": "Application de vente de vins et spiritueux",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "ext-pdo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
