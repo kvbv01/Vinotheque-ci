@@ -97,6 +97,10 @@ switch ($request) {
         $controller->adminStore();
         break;
         
+    case '/sale-restricted':
+        require 'views/sale-restricted.php';
+        break;
+        
     default:
         http_response_code(404);
         require 'views/errors/404.php';

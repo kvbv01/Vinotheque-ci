@@ -1,15 +1,25 @@
 <?php
+require_once 'CountryRegulation.php';
+
 class User {
     private $db;
+    private $countryRegulation;
 
     public function __construct() {
         $this->db = new Database();
+        $this->countryRegulation = new CountryRegulation();
     }
 
     public function register($data) {
+        // Vérification de l'âge légal selon le pays
+        $country_code = $data['country_code'] ?? 'CI'; // Défaut: Côte d'Ivoire
+        if (!$this->countryRegulation->isLegalAge($data['birth_date'], $country_code)) {
+            return ['success' => false, 'error' => 'age_restriction', 'country' => $country_code];
+        }
+        
         $conn = $this->db->connect();
-        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password, phone, birth_date) 
-                               VALUES (:first_name, :last_name, :email, :password, :phone, :birth_date)");
+        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password, phone, birth_date, country_code, created_at) 
+                               VALUES (:first_name, :last_name, :email, :password, :phone, :birth_date, :country_code, NOW())");
         
         $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
         
@@ -19,8 +29,13 @@ class User {
         $stmt->bindParam(':password', $hashed_password);
         $stmt->bindParam(':phone', $data['phone']);
         $stmt->bindParam(':birth_date', $data['birth_date']);
+        $stmt->bindParam(':country_code', $country_code);
         
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            return ['success' => true, 'user_id' => $conn->lastInsertId()];
+        }
+        
+        return ['success' => false, 'error' => 'database_error'];
     }
 
     public function login($email, $password) {
@@ -32,13 +47,17 @@ class User {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($user && password_verify($password, $user['password'])) {
-            // Vérification de l'âge (18 ans minimum)
-            $birth_date = new DateTime($user['birth_date']);
-            $today = new DateTime();
-            $age = $today->diff($birth_date)->y;
-            
-            if ($age >= 18) {
-                return $user;
+            // Vérification de l'âge selon les réglementations du pays
+            $country_code = $user['country_code'] ?? 'CI';
+            if ($this->countryRegulation->isLegalAge($user['birth_date'], $country_code)) {
+                // Vérifier si la vente est autorisée actuellement
+                if ($this->countryRegulation->isSaleAllowed($country_code)) {
+                    return $user;
+                } else {
+                    return ['error' => 'sale_not_allowed', 'user' => $user, 'next_window' => $this->countryRegulation->getNextSaleWindow($country_code)];
+                }
+            } else {
+                return ['error' => 'age_restriction', 'country' => $country_code];
             }
         }
         
@@ -133,4 +152,46 @@ public function getAllUsers() {
     $stmt = $conn->prepare("SELECT * FROM users ORDER BY created_at DESC");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Vérifier si l'utilisateur peut effectuer un achat maintenant
+ */
+public function canPurchase($user_id) {
+    $user = $this->getUserById($user_id);
+    if (!$user) {
+        return ['allowed' => false, 'reason' => 'user_not_found'];
+    }
+    
+    $country_code = $user['country_code'] ?? 'CI';
+    
+    // Vérifier l'âge
+    if (!$this->countryRegulation->isLegalAge($user['birth_date'], $country_code)) {
+        return ['allowed' => false, 'reason' => 'age_restriction'];
+    }
+    
+    // Vérifier les horaires de vente
+    if (!$this->countryRegulation->isSaleAllowed($country_code)) {
+        return [
+            'allowed' => false, 
+            'reason' => 'sale_hours_restriction',
+            'next_window' => $this->countryRegulation->getNextSaleWindow($country_code)
+        ];
+    }
+    
+    return ['allowed' => true];
+}
+
+/**
+ * Obtenir les pays supportés
+ */
+public function getSupportedCountries() {
+    return $this->countryRegulation->getSupportedCountries();
+}
+
+/**
+ * Obtenir les informations de réglementation pour un pays
+ */
+public function getCountryInfo($country_code) {
+    return $this->countryRegulation->getCountryRegulations($country_code);
 }
